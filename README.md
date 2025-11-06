@@ -155,22 +155,31 @@ Key flows to test:
 
 ## 🚢 Deployment
 
-Deploy to Vercel in minutes:
+### Quick Deploy (10 minutes)
+
+This project is **Vercel-ready**! Just follow these steps:
 
 ```bash
-# 1. Push to GitHub
+# 1. Check your environment
+npm run check-env
+
+# 2. Push to GitHub
 git init
 git add .
 git commit -m "Initial commit"
 git push
 
-# 2. Deploy on Vercel
-# Connect GitHub repo
-# Add environment variables
-# Deploy!
+# 3. Deploy on Vercel
+# Connect GitHub repo → Add env vars → Deploy!
 ```
 
-**→ Detailed deployment guide**: See [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)
+### 📖 Deployment Guides
+
+- **[DEPLOY.md](./DEPLOY.md)** - ⚡ Quick start (10 min)
+- **[VERCEL_READY.md](./VERCEL_READY.md)** - ✅ What's configured & ready
+- **[VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)** - 📚 Complete guide
+- **[DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)** - 🧪 Testing checklist
+- **[env-setup-guide.md](./env-setup-guide.md)** - 🔧 Environment variables
 
 ## 🔄 Roadmap
 

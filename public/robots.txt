@@ -1,0 +1,11 @@
+# Robots.txt for Pritti (Dikla)
+# Allow all search engines
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://your-domain.com/sitemap.xml
+
