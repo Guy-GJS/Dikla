@@ -42,7 +42,7 @@ export default function ProductCard({ item }: ProductCardProps) {
               ⭐ מומלץ
             </div>
           )}
-          {item.condition === 'new' && (
+          {item.condition === 'חדש' && (
             <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm">
               חדש
             </div>
@@ -94,16 +94,14 @@ export default function ProductCard({ item }: ProductCardProps) {
           {item.condition && (
             <span className={`
               inline-block px-3 py-1 rounded-full text-xs font-medium
-              ${item.condition === 'new' 
+              ${item.condition === 'חדש' 
                 ? 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-700' 
-                : item.condition === 'like_new'
+                : item.condition === 'כמו חדש'
                 ? 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700'
                 : 'bg-gray-100 text-gray-700'
               }
             `}>
-              {item.condition === 'new' ? 'חדש' : 
-               item.condition === 'like_new' ? 'כמו חדש' :
-               item.condition === 'good' ? 'מצב טוב' : item.condition}
+              {item.condition}
             </span>
           )}
         </div>
