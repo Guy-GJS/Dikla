@@ -341,7 +341,7 @@ export default function AdminPage() {
                     <th className="px-4 py-3 text-right text-sm font-semibold">כותרת</th>
                     <th className="px-4 py-3 text-right text-sm font-semibold">מחיר</th>
                     <th className="px-4 py-3 text-right text-sm font-semibold">סטטוס</th>
-                    <th className="px-4 py-3 text-right text-sm font-semibold">מוצג בראשי</th>
+                    <th className="px-4 py-3 text-right text-sm font-semibold">מומלץ</th>
                     <th className="px-4 py-3 text-right text-sm font-semibold">פעולות</th>
                   </tr>
                 </thead>
@@ -544,7 +544,7 @@ export default function AdminPage() {
                       <th className="px-4 py-3 text-right text-sm font-semibold">תמונה</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">שם</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">Slug</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold">מוצג בראשי</th>
+                      <th className="px-4 py-3 text-right text-sm font-semibold">מומלץ</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">סדר</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">פעולות</th>
                     </tr>
@@ -848,7 +848,7 @@ function CategoryModal({
               className="w-4 h-4"
             />
             <label htmlFor="is_featured" className="font-medium">
-              מוצג בראשי
+              מומלץ
             </label>
           </div>
 
