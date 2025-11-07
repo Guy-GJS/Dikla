@@ -57,7 +57,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link
       href={`/category/${category.slug}`}
-      className="group relative block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-transparent transform hover:-translate-y-2"
+      className="group relative block bg-white rounded-xl sm:rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-transparent transform hover:-translate-y-1 active:scale-95"
     >
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
@@ -90,14 +90,14 @@ export default function CategoryCard({ category }: CategoryCardProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10">
           {!category.image_url && (
             <div className={`
-              w-20 h-20 rounded-2xl flex items-center justify-center mb-4
+              w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-3 md:mb-4
               bg-gradient-to-br ${colorGradient}
               shadow-2xl transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300
             `}>
               {icon}
             </div>
           )}
-          <h3 className="font-bold text-2xl text-center px-4 drop-shadow-lg">
+          <h3 className="font-bold text-base sm:text-lg md:text-xl lg:text-2xl text-center px-2 sm:px-3 md:px-4 drop-shadow-lg">
             {category.name}
           </h3>
         </div>
@@ -116,8 +116,8 @@ export default function CategoryCard({ category }: CategoryCardProps) {
       </div>
       
       {/* Item Count Badge */}
-      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full shadow-md">
-        <span className="text-xs font-bold text-gray-700">
+      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/90 backdrop-blur-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-full shadow-md">
+        <span className="text-[10px] sm:text-xs font-bold text-gray-700">
           {category.item_count || 0} פריטים
         </span>
       </div>

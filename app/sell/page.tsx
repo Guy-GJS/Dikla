@@ -167,20 +167,20 @@ export default function SellPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-8 sm:py-12">
         <div className="container mx-auto px-4 max-w-3xl">
           {/* Header Text */}
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">מכירת מוצר</h1>
-            <p className="text-lg text-gray-700">
+          <div className="mb-6 sm:mb-8 text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-4">מכירת מוצר</h1>
+            <p className="text-base sm:text-lg text-gray-700 px-4">
               איזו החלטה נבונה להעביר הלאה את מה שכבר אין לך צורך בו!
-              <br />
-              כמה פרטים קטנים ואנחנו נדאג למצוא עבורך קונה
+              <br className="hidden sm:block" />
+              <span className="block sm:inline mt-1 sm:mt-0">כמה פרטים קטנים ואנחנו נדאג למצוא עבורך קונה</span>
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
+          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-4 sm:p-6 space-y-5 sm:space-y-6">
             {/* Title */}
             <div>
               <label htmlFor="title" className="block font-medium mb-2">
@@ -302,11 +302,11 @@ export default function SellPage() {
 
             {/* Images */}
             <div>
-              <label className="block font-medium mb-2">
+              <label className="block font-medium mb-2 text-sm sm:text-base">
                 תמונות (עד 8)
               </label>
               
-              <div className="grid grid-cols-4 gap-4 mb-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 mb-4">
                 {imagePreviews.map((preview, index) => (
                   <div key={index} className="relative aspect-square">
                     <img
@@ -317,7 +317,7 @@ export default function SellPage() {
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
+                      className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-red-500 text-white rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center hover:bg-red-600 text-lg sm:text-xl"
                     >
                       ×
                     </button>
@@ -326,11 +326,11 @@ export default function SellPage() {
               </div>
 
               {imageFiles.length < 8 && (
-                <label className="block w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition-colors">
-                  <svg className="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <label className="block w-full border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 text-center cursor-pointer hover:border-blue-500 active:border-blue-600 transition-colors">
+                  <svg className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  <span className="text-gray-600">לחץ להוספת תמונות</span>
+                  <span className="text-sm sm:text-base text-gray-600">לחץ להוספת תמונות</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -413,7 +413,7 @@ export default function SellPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400 text-white font-semibold py-3 sm:py-4 px-6 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-lg"
             >
               {loading ? 'מפרסם...' : 'פרסם מוצר'}
             </button>

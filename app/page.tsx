@@ -57,16 +57,8 @@ export default async function HomePage() {
           <div className="container mx-auto px-4 relative z-10 py-20">
             <div className="max-w-6xl mx-auto">
               {/* Hero Text */}
-              <div className="text-center mb-16 space-y-6">
-                <div className="inline-block">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 text-sm font-medium mb-6 border border-blue-200/50">
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    פלטפורמה בטוחה ואמינה
-                  </span>
-                </div>
-                <h1 className="text-6xl md:text-8xl font-extrabold leading-tight">
+              <div className="text-center mb-12 md:mb-16 space-y-4 md:space-y-6">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-extrabold leading-tight px-4">
                   <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 mb-2">
                     קונים ומוכרים הכל
                   </span>
@@ -74,20 +66,20 @@ export default async function HomePage() {
                     ובקלות
                   </span>
                 </h1>
-                <p className="text-2xl md:text-3xl text-gray-700 font-medium max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl sm:text-2xl md:text-3xl text-gray-700 font-medium max-w-3xl mx-auto leading-relaxed px-4">
                   מפנים את הארון למשהו טוב
                 </p>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto mt-4">
+                <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
                   הפלטפורמה החברתית למכירה וקנייה של מוצרי יד שנייה בישראל
                 </p>
               </div>
 
               {/* CTA Cards - Glassmorphism Style */}
-              <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-5xl mx-auto px-4">
                 {/* Buyer CTA */}
                 <Link
                   href="/buy"
-                  className="group relative overflow-hidden rounded-3xl p-8 md:p-12 backdrop-blur-xl bg-white/70 border border-white/20 shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+                  className="group relative overflow-hidden rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 backdrop-blur-xl bg-white/70 border border-white/20 shadow-2xl hover:shadow-blue-500/20 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
                 >
                   {/* Animated Gradient Background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -96,15 +88,15 @@ export default async function HomePage() {
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
                   
                   <div className="relative z-10">
-                    <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-xl shadow-blue-500/30">
-                      <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-xl shadow-blue-500/30">
+                      <svg className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                       </svg>
                     </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 group-hover:text-blue-600 transition-colors">
                       מחפש מוצר יד שנייה
                     </h2>
-                    <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                    <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-4 sm:mb-6">
                       חפש ומצא מוצרים איכותיים במחירים הוגנים
                     </p>
                     <div className="flex items-center justify-center gap-2 text-blue-600 font-semibold group-hover:gap-4 transition-all">
@@ -122,7 +114,7 @@ export default async function HomePage() {
                 {/* Seller CTA */}
                 <Link
                   href="/sell"
-                  className="group relative overflow-hidden rounded-3xl p-8 md:p-12 backdrop-blur-xl bg-white/70 border border-white/20 shadow-2xl hover:shadow-green-500/20 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
+                  className="group relative overflow-hidden rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 backdrop-blur-xl bg-white/70 border border-white/20 shadow-2xl hover:shadow-green-500/20 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
                 >
                   {/* Animated Gradient Background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -131,15 +123,15 @@ export default async function HomePage() {
                   <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
                   
                   <div className="relative z-10">
-                    <div className="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-xl shadow-green-500/30">
-                      <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-xl shadow-green-500/30">
+                      <svg className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 group-hover:text-green-600 transition-colors">
+                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 group-hover:text-green-600 transition-colors">
                       מוכר / מוסר מוצר שווה
                     </h2>
-                    <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                    <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-4 sm:mb-6">
                       הפוך פריטים ישנים למזומן וצור מקום בבית
                     </p>
                     <div className="flex items-center justify-center gap-2 text-green-600 font-semibold group-hover:gap-4 transition-all">
@@ -159,18 +151,18 @@ export default async function HomePage() {
         </section>
 
         {/* Categories Section - Enhanced */}
-        <section className="py-24 bg-gradient-to-b from-white to-gray-50">
+        <section className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent px-4">
                 קטגוריות פופולריות
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">
                 גלה את המגוון הרחב של מוצרי יד שנייה שלנו
               </p>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-6 max-w-7xl mx-auto">
               {categories.map((category) => (
                 <CategoryCard key={category.id} category={category} />
               ))}
@@ -179,23 +171,23 @@ export default async function HomePage() {
         </section>
 
         {/* How It Works Section - Enhanced */}
-        <section id="how-it-works" className="py-24 bg-gradient-to-b from-gray-50 via-white to-gray-50 relative overflow-hidden">
+        <section id="how-it-works" className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-gray-50 via-white to-gray-50 relative overflow-hidden">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
           </div>
           
           <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <div className="text-center mb-12 sm:mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent px-4">
                 איך זה עובד?
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">
                 תהליך פשוט ומהיר למכירה וקנייה
               </p>
             </div>
             
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto">
               <div className="group relative text-center p-8 rounded-3xl bg-white/50 backdrop-blur-sm border border-gray-100 hover:border-blue-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative z-10">
@@ -239,20 +231,20 @@ export default async function HomePage() {
         </section>
 
         {/* About Section - Enhanced */}
-        <section id="about" className="py-24 bg-gradient-to-b from-gray-50 to-white">
+        <section id="about" className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-gray-50 to-white">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-12">
-                <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+              <div className="text-center mb-8 sm:mb-12">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent px-4">
                   אודות פריטי
                 </h2>
               </div>
-              <div className="bg-white/70 backdrop-blur-sm rounded-3xl p-10 md:p-16 border border-gray-100 shadow-xl">
-                <p className="text-xl text-gray-700 mb-6 leading-relaxed">
+              <div className="bg-white/70 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 lg:p-16 border border-gray-100 shadow-xl">
+                <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-4 sm:mb-6 leading-relaxed">
                   פריטי היא הפלטפורמה המובילה למכירת ורכישת מוצרי יד שנייה בישראל.
                   אנחנו מאמינים שכל פריט יכול למצוא בית חדש, ושקנייה חכמה היא גם קנייה ירוקה.
                 </p>
-                <p className="text-xl text-gray-700 leading-relaxed">
+                <p className="text-base sm:text-lg md:text-xl text-gray-700 leading-relaxed">
                   המטרה שלנו היא ליצור שוק פשוט, בטוח ונוח שמחבר בין מוכרים לקונים,
                   ועוזר לכם למצוא בדיוק את מה שאתם צריכים במחיר הוגן.
                 </p>
@@ -262,11 +254,11 @@ export default async function HomePage() {
         </section>
 
         {/* Social Links - Enhanced */}
-        <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+        <section className="py-12 sm:py-16 bg-gradient-to-b from-white to-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center">
-              <h3 className="text-2xl font-bold mb-2 text-gray-900">עקבו אחרינו ברשתות החברתיות</h3>
-              <p className="text-gray-600 mb-8">הישארו מעודכנים על מוצרים חדשים והצעות מיוחדות</p>
+              <h3 className="text-xl sm:text-2xl font-bold mb-2 text-gray-900 px-4">עקבו אחרינו ברשתות החברתיות</h3>
+              <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 px-4">הישארו מעודכנים על מוצרים חדשים והצעות מיוחדות</p>
               <div className="flex justify-center gap-4">
                 <a 
                   href="#" 

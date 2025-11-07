@@ -47,6 +47,8 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json()
     const { key, value } = body
 
+    console.log('[API /api/admin/settings PATCH] Saving setting:', { key, value: JSON.stringify(value) })
+
     if (!key || value === undefined) {
       return NextResponse.json({ error: 'Missing key or value' }, { status: 400 })
     }
@@ -57,13 +59,15 @@ export async function PATCH(request: NextRequest) {
       .select()
 
     if (error) {
-      console.error('Error updating setting:', error)
+      console.error('[API /api/admin/settings PATCH] Error updating setting:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
+    console.log('[API /api/admin/settings PATCH] Successfully saved:', data)
+
     return NextResponse.json({ data })
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error('[API /api/admin/settings PATCH] Unexpected error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

@@ -71,29 +71,29 @@ async function BuyPageContent({
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-8 sm:py-12">
         <div className="container mx-auto px-4">
           {/* Header with empowering text */}
-          <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">מחפשים מוצר יד שנייה?</h1>
-            <p className="text-lg text-blue-600 font-medium italic">
+          <div className="mb-6 sm:mb-8 text-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 px-4">מחפשים מוצר יד שנייה?</h1>
+            <p className="text-base sm:text-lg text-blue-600 font-medium italic px-4">
               {randomText}
             </p>
           </div>
 
           {/* Search Bar */}
-          <div className="mb-12">
+          <div className="mb-8 sm:mb-12">
             <SearchBar categories={categories} />
           </div>
 
           {/* Results */}
           {items.length > 0 ? (
             <div>
-              <div className="mb-6 text-gray-600">
+              <div className="mb-4 sm:mb-6 text-sm sm:text-base text-gray-600">
                 נמצאו {items.length} מוצרים
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {items.map((item) => (
                   <ProductCard key={item.id} item={item} />
                 ))}

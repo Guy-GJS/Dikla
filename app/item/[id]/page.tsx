@@ -134,9 +134,9 @@ export default function ItemPage() {
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-8 sm:py-12">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12">
             {/* Image Slider */}
             <div>
               <ImageSlider images={item.image_urls} alt={item.title} />
@@ -146,25 +146,25 @@ export default function ItemPage() {
             <div>
               <div className="mb-6">
                 {item.category && (
-                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm font-medium mb-3">
+                  <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded text-xs sm:text-sm font-medium mb-3">
                     {item.category.name}
                   </span>
                 )}
                 
-                <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4">
                   {item.title}
                 </h1>
 
                 {item.condition && (
                   <div className="mb-4">
-                    <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded text-sm">
+                    <span className="inline-block bg-gray-100 text-gray-700 px-3 py-1 rounded text-xs sm:text-sm">
                       מצב: {item.condition}
                     </span>
                   </div>
                 )}
 
                 {item.description && (
-                  <p className="text-gray-700 text-lg leading-relaxed mb-6">
+                  <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-4 sm:mb-6">
                     {item.description}
                   </p>
                 )}
@@ -196,17 +196,17 @@ export default function ItemPage() {
               />
 
               {/* CTA Buttons */}
-              <div className="mt-8 space-y-4">
+              <div className="mt-6 sm:mt-8 space-y-3 sm:space-y-4">
                 <button
                   onClick={() => handleBuyClick('delivery')}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 sm:py-4 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base sm:text-lg"
                 >
                   לרכישה עד הבית
                 </button>
 
                 <button
                   onClick={() => handleBuyClick('pickup')}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                  className="w-full bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold py-3 sm:py-4 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 text-base sm:text-lg"
                 >
                   לרכישה באיסוף עצמי
                 </button>
@@ -218,14 +218,14 @@ export default function ItemPage() {
 
       {/* Buyer Info Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-xl font-bold mb-4">
+        <div className="fixed inset-0 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
+          <div className="bg-white rounded-t-2xl sm:rounded-lg max-w-md w-full p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">
               לתיאום אנחנו צריכים כמה פרטים שלך
             </h3>
 
             <form onSubmit={(e) => { e.preventDefault(); handleProceed(); }} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">שם פרטי</label>
                   <input
@@ -271,17 +271,17 @@ export default function ItemPage() {
                 />
               </div>
 
-              <div className="flex gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-md transition-colors"
+                  className="flex-1 bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 font-semibold py-3 px-4 rounded-md transition-colors order-2 sm:order-1"
                 >
                   ביטול
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-colors"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 px-4 rounded-md transition-colors order-1 sm:order-2"
                 >
                   המשך
                 </button>

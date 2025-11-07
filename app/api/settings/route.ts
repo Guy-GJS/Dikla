@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
 // Disable caching for this endpoint
 export const dynamic = 'force-dynamic'
@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
     console.log('[API /api/settings] Fetching settings from database...')
     
     // Fetch public settings (commission config and shipping)
-    const { data, error } = await supabase
+    // Use supabaseAdmin to bypass RLS and avoid recursion issues
+    const { data, error } = await supabaseAdmin
       .from('settings')
       .select('*')
       .in('key', ['commission_config', 'pritti_default_shipping'])
