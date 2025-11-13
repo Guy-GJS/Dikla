@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Navigation from './Navigation'
 import { usePathname } from 'next/navigation'
 
@@ -138,23 +139,17 @@ export default function Header() {
             {/* Logo Section (Now on Right) */}
             <Link 
               href="/" 
-              className="group flex items-center gap-3 transition-transform hover:scale-105"
+              className="group flex items-center transition-transform hover:scale-105"
             >
-              <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 rounded-xl blur-lg opacity-70 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold text-xl px-3 py-2 rounded-xl">
-                  P
-                </div>
-              </div>
-              <span className={`
-                font-bold text-2xl transition-colors
-                ${isScrolled 
-                  ? 'text-gray-800' 
-                  : pathname === '/' ? 'text-gray-800' : 'text-gray-800'
-                }
-              `}>
-                Pritti
-              </span>
+              <Image
+                src="/logo.jpg"
+                alt="Pritti Logo"
+                width={150}
+                height={50}
+                className="object-contain h-12 w-auto"
+                priority
+                unoptimized
+              />
             </Link>
           </div>
         </div>

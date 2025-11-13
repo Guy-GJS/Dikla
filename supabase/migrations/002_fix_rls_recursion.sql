@@ -25,3 +25,4 @@ CREATE POLICY "Sellers can view their own items"
   ON items FOR SELECT
   USING (auth.uid() = seller_id);
 
+

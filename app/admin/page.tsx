@@ -25,6 +25,7 @@ export default function AdminPage() {
   const [editingItem, setEditingItem] = useState<Item | null>(null)
   const [editingCategory, setEditingCategory] = useState<Category | null>(null)
   const [showCategoryModal, setShowCategoryModal] = useState(false)
+  const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(null)
 
   useEffect(() => {
     // Check if already authenticated in session
@@ -541,60 +542,93 @@ export default function AdminPage() {
                 <table className="w-full">
                   <thead className="bg-gray-50 border-b">
                     <tr>
+                      <th className="px-4 py-3 text-right text-sm font-semibold w-10"></th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">תמונה</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">שם</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">Slug</th>
-                      <th className="px-4 py-3 text-right text-sm font-semibold">מומלץ</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">סדר</th>
                       <th className="px-4 py-3 text-right text-sm font-semibold">פעולות</th>
                     </tr>
                   </thead>
                   <tbody>
                     {categories.map((category) => (
-                      <tr key={category.id} className="border-b hover:bg-gray-50">
-                        <td className="px-4 py-3">
-                          {category.image_url ? (
-                            <img 
-                              src={category.image_url} 
-                              alt={category.name}
-                              className="w-16 h-16 object-cover rounded-md"
-                            />
-                          ) : (
-                            <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs">
-                              אין תמונה
+                      <>
+                        <tr key={category.id} className="border-b hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            {category.subcategories && category.subcategories.length > 0 && (
+                              <button
+                                onClick={() => setExpandedCategoryId(expandedCategoryId === category.id ? null : category.id)}
+                                className="text-gray-600 hover:text-gray-900 transition-transform duration-200"
+                                style={{ transform: expandedCategoryId === category.id ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                              </button>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            {category.image_url ? (
+                              <img 
+                                src={category.image_url} 
+                                alt={category.name}
+                                className="w-16 h-16 object-cover rounded-md"
+                              />
+                            ) : (
+                              <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs">
+                                אין תמונה
+                              </div>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-2">
+                              <span className="font-medium">{category.name}</span>
+                              {category.subcategories && category.subcategories.length > 0 && (
+                                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                                  {category.subcategories.length} תתי קטגוריות
+                                </span>
+                              )}
                             </div>
-                          )}
-                        </td>
-                        <td className="px-4 py-3">{category.name}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{category.slug}</td>
-                        <td className="px-4 py-3">
-                          <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                            category.is_featured ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {category.is_featured ? 'כן' : 'לא'}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3 text-sm">{category.sort_order}</td>
-                        <td className="px-4 py-3">
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => {
-                                setEditingCategory(category)
-                                setShowCategoryModal(true)
-                              }}
-                              className="text-blue-600 hover:text-blue-700 text-sm"
-                            >
-                              ערוך
-                            </button>
-                            <button
-                              onClick={() => deleteCategory(category.id)}
-                              className="text-red-600 hover:text-red-700 text-sm"
-                            >
-                              מחק
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-600">{category.slug}</td>
+                          <td className="px-4 py-3 text-sm">{category.sort_order}</td>
+                          <td className="px-4 py-3">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => {
+                                  setEditingCategory(category)
+                                  setShowCategoryModal(true)
+                                }}
+                                className="text-blue-600 hover:text-blue-700 text-sm"
+                              >
+                                ערוך
+                              </button>
+                              <button
+                                onClick={() => deleteCategory(category.id)}
+                                className="text-red-600 hover:text-red-700 text-sm"
+                              >
+                                מחק
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                        {/* Expanded row for subcategories */}
+                        {expandedCategoryId === category.id && category.subcategories && category.subcategories.length > 0 && (
+                          <tr key={`${category.id}-expanded`} className="bg-blue-50 border-b">
+                            <td></td>
+                            <td colSpan={5} className="px-4 py-3">
+                              <div className="flex flex-wrap gap-2">
+                                <span className="text-sm font-medium text-gray-700 mr-2">תתי קטגוריות:</span>
+                                {category.subcategories.map((subcat, idx) => (
+                                  <span key={idx} className="inline-block px-3 py-1 bg-white text-blue-800 border border-blue-200 rounded-full text-sm">
+                                    {subcat}
+                                  </span>
+                                ))}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
                     ))}
                   </tbody>
                 </table>
@@ -656,11 +690,13 @@ function CategoryModal({
     image_url: category?.image_url || '',
     is_featured: category?.is_featured || false,
     sort_order: category?.sort_order || 0,
+    subcategories: category?.subcategories || [],
   })
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>(category?.image_url || '')
   const [uploadingImage, setUploadingImage] = useState(false)
   const [error, setError] = useState('')
+  const [newSubcategory, setNewSubcategory] = useState('')
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -693,6 +729,23 @@ function CategoryModal({
     setImageFile(null)
     setImagePreview('')
     setFormData({ ...formData, image_url: '' })
+  }
+
+  const addSubcategory = () => {
+    if (newSubcategory.trim() && !formData.subcategories.includes(newSubcategory.trim())) {
+      setFormData({
+        ...formData,
+        subcategories: [...formData.subcategories, newSubcategory.trim()]
+      })
+      setNewSubcategory('')
+    }
+  }
+
+  const removeSubcategory = (index: number) => {
+    setFormData({
+      ...formData,
+      subcategories: formData.subcategories.filter((_, i) => i !== index)
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -837,6 +890,58 @@ function CategoryModal({
               onChange={(e) => setFormData({ ...formData, sort_order: parseInt(e.target.value) || 0 })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
             />
+          </div>
+
+          <div>
+            <label className="block font-medium mb-2">
+              תתי קטגוריות
+            </label>
+            <div className="space-y-2">
+              {/* Display existing subcategories */}
+              {formData.subcategories.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {formData.subcategories.map((subcat, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                    >
+                      <span>{subcat}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeSubcategory(index)}
+                        className="text-blue-600 hover:text-blue-800 font-bold"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {/* Add new subcategory */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newSubcategory}
+                  onChange={(e) => setNewSubcategory(e.target.value)}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault()
+                      addSubcategory()
+                    }
+                  }}
+                  placeholder="הוסף תת קטגוריה"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={addSubcategory}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm whitespace-nowrap"
+                >
+                  הוסף
+                </button>
+              </div>
+              <p className="text-xs text-gray-500">לחץ Enter או על הכפתור כדי להוסיף תת קטגוריה</p>
+            </div>
           </div>
 
           <div className="flex items-center gap-2">

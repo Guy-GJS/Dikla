@@ -22,6 +22,7 @@ export default function SellPage() {
     title: '',
     description: '',
     categoryId: '',
+    subcategory: '',
     condition: '' as ItemCondition | '',
     city: '',
     neighborhood: '',
@@ -111,6 +112,7 @@ export default function SellPage() {
           title: formData.title,
           description: formData.description || null,
           category_id: formData.categoryId, // Required field
+          subcategory: formData.subcategory || null,
           condition: formData.condition || null,
           city: formData.city || null,
           neighborhood: formData.neighborhood || null,
@@ -221,7 +223,7 @@ export default function SellPage() {
                 id="categoryId"
                 required
                 value={formData.categoryId}
-                onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, categoryId: e.target.value, subcategory: '' })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
               >
                 <option value="">בחר קטגוריה</option>
@@ -230,6 +232,26 @@ export default function SellPage() {
                 ))}
               </select>
             </div>
+
+            {/* Subcategory - only show if category has subcategories */}
+            {formData.categoryId && categories.find(c => c.id === formData.categoryId)?.subcategories && categories.find(c => c.id === formData.categoryId)!.subcategories!.length > 0 && (
+              <div>
+                <label htmlFor="subcategory" className="block font-medium mb-2">
+                  תת קטגוריה
+                </label>
+                <select
+                  id="subcategory"
+                  value={formData.subcategory}
+                  onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+                >
+                  <option value="">בחר תת קטגוריה (אופציונלי)</option>
+                  {categories.find(c => c.id === formData.categoryId)!.subcategories!.map(subcat => (
+                    <option key={subcat} value={subcat}>{subcat}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Condition & Price */}
             <div className="grid md:grid-cols-2 gap-4">

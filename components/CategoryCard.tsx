@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Category } from '@/lib/types'
@@ -51,8 +52,10 @@ const categoryColors: Record<string, string> = {
 }
 
 export default function CategoryCard({ category }: CategoryCardProps) {
+  const [imageError, setImageError] = useState(false)
   const icon = categoryIcons[category.slug] || categoryIcons.default
   const colorGradient = categoryColors[category.slug] || categoryColors.default
+  const hasValidImage = category.image_url && !imageError
 
   return (
     <Link
@@ -71,13 +74,15 @@ export default function CategoryCard({ category }: CategoryCardProps) {
       </div>
 
       <div className="aspect-square relative">
-        {category.image_url ? (
+        {hasValidImage ? (
           <>
             <Image
-              src={category.image_url}
+              src={category.image_url || '/placeholder.jpg'}
               alt={category.name}
               fill
+              sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               className="object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+              onError={() => setImageError(true)}
             />
             {/* Gradient Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
@@ -88,7 +93,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
 
         {/* Icon and Name Overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white z-10">
-          {!category.image_url && (
+          {!hasValidImage && (
             <div className={`
               w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl sm:rounded-2xl flex items-center justify-center mb-2 sm:mb-3 md:mb-4
               bg-gradient-to-br ${colorGradient}

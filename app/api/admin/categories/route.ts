@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { name, slug, image_url, is_featured, sort_order } = body
+    const { name, slug, image_url, is_featured, sort_order, subcategories } = body
 
     if (!name || !slug) {
       return NextResponse.json({ error: 'Missing required fields: name and slug' }, { status: 400 })
@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
         image_url: image_url || null,
         is_featured: is_featured || false,
         sort_order: sort_order || 0,
+        subcategories: subcategories || [],
       })
       .select()
 
@@ -139,4 +140,5 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
+
 

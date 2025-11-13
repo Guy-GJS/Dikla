@@ -25,6 +25,7 @@ export default function EditItemModal({
     price_ask: item.price_ask,
     condition: item.condition || 'מצב טוב',
     category_id: item.category_id || '',
+    subcategory: item.subcategory || '',
     city: item.city || '',
     neighborhood: item.neighborhood || '',
     seller_name: item.seller_name || '',
@@ -202,7 +203,7 @@ export default function EditItemModal({
               id="category_id"
               required
               value={formData.category_id}
-              onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, category_id: e.target.value, subcategory: '' })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
             >
               <option value="">בחר קטגוריה</option>
@@ -211,6 +212,26 @@ export default function EditItemModal({
               ))}
             </select>
           </div>
+
+          {/* Subcategory - only show if category has subcategories */}
+          {formData.category_id && categories.find(c => c.id === formData.category_id)?.subcategories && categories.find(c => c.id === formData.category_id)!.subcategories!.length > 0 && (
+            <div>
+              <label htmlFor="subcategory" className="block text-sm font-medium mb-1">
+                תת קטגוריה
+              </label>
+              <select
+                id="subcategory"
+                value={formData.subcategory}
+                onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+              >
+                <option value="">בחר תת קטגוריה (אופציונלי)</option>
+                {categories.find(c => c.id === formData.category_id)!.subcategories!.map(subcat => (
+                  <option key={subcat} value={subcat}>{subcat}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <div>

@@ -15,6 +15,7 @@ export interface Category {
   image_url: string | null
   is_featured: boolean
   sort_order: number
+  subcategories?: string[]
   created_at?: string
   item_count?: number
 }
@@ -28,6 +29,7 @@ export interface Item {
   title: string
   description: string | null
   category_id: string | null
+  subcategory: string | null
   condition: ItemCondition | null
   city: string | null
   neighborhood: string | null

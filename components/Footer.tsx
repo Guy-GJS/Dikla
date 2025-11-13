@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
@@ -17,14 +18,15 @@ export default function Footer() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {/* Brand Section */}
             <div className="col-span-1">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-purple-600 rounded-xl blur-lg opacity-70"></div>
-                  <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 text-white font-bold text-lg sm:text-xl px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl">
-                    P
-                  </div>
-                </div>
-                <span className="font-bold text-xl sm:text-2xl">Pritti</span>
+              <div className="mb-4">
+                <Image
+                  src="/logo.jpg"
+                  alt="Pritti Logo"
+                  width={150}
+                  height={50}
+                  className="object-contain h-12 w-auto"
+                  unoptimized
+                />
               </div>
               <p className="text-sm sm:text-base text-gray-300 max-w-md">
                 קונים ומוכרים הכל. ובקלות - הפלטפורמה החברתית למכירה וקניה של מוצרי יד שנייה בישראל
