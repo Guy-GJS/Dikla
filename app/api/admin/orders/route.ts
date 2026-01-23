@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
+import { validateAdminRequest } from '@/lib/adminAuth'
 
 export const dynamic = 'force-dynamic'
-
-// SECURITY: This validates admin access before allowing ANY database operations
-function validateAdminAuth(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization')
-  // Support both ADMIN_SECRET and NEXT_PUBLIC_ADMIN_SECRET for backward compatibility
-  const validToken = process.env.ADMIN_SECRET || process.env.NEXT_PUBLIC_ADMIN_SECRET || 'admin123'
-  return authHeader === `Bearer ${validToken}`
-}
 
 export async function GET(request: NextRequest) {
   try {
     // SECURITY: Reject unauthorized requests immediately
-    if (!validateAdminAuth(request)) {
+    if (!validateAdminRequest(request)) {
       console.warn('Unauthorized admin access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

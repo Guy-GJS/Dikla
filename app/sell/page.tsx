@@ -1,22 +1,41 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import AuthForm from '@/components/AuthForm'
+import { useAuth } from '@/components/AuthProvider'
 import { supabase } from '@/lib/supabase'
-import { ItemCondition, Category } from '@/lib/types'
+import { formatPrice } from '@/lib/pricing'
+import { ItemCondition, Category, Profile, Item, ItemStatus } from '@/lib/types'
 
 const CONDITIONS: ItemCondition[] = ['חדש', 'כמו חדש', 'מצב טוב', 'סביר']
+const STATUS_LABELS: Record<ItemStatus, string> = {
+  pending_approval: 'ממתין לאישור',
+  approved: 'מאושר',
+  sold: 'נמכר',
+  rejected: 'נדחה',
+}
+const STATUS_STYLES: Record<ItemStatus, string> = {
+  pending_approval: 'bg-yellow-100 text-yellow-800',
+  approved: 'bg-green-100 text-green-800',
+  sold: 'bg-gray-200 text-gray-700',
+  rejected: 'bg-red-100 text-red-700',
+}
 
 export default function SellPage() {
-  const router = useRouter()
+  const { user, loading: authLoading } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [profileLoading, setProfileLoading] = useState(false)
+  const [items, setItems] = useState<Item[]>([])
+  const [itemsLoading, setItemsLoading] = useState(false)
+  const [itemsError, setItemsError] = useState('')
   
   const [formData, setFormData] = useState({
     title: '',
@@ -36,6 +55,98 @@ export default function SellPage() {
   useEffect(() => {
     fetchCategories()
   }, [])
+
+  useEffect(() => {
+    if (!user) {
+      setProfile(null)
+      setItems([])
+      return
+    }
+
+    const fetchProfile = async () => {
+      setProfileLoading(true)
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle()
+
+        if (error) throw error
+        setProfile(data || null)
+      } catch (err) {
+        console.error('Error fetching profile:', err)
+      } finally {
+        setProfileLoading(false)
+      }
+    }
+
+    fetchProfile()
+  }, [user])
+
+  useEffect(() => {
+    if (!user) return
+
+    const loadItems = async () => {
+      setItemsLoading(true)
+      setItemsError('')
+      try {
+        const { data, error } = await supabase
+          .from('items')
+          .select('*, category:categories(id, name)')
+          .eq('seller_id', user.id)
+          .order('created_at', { ascending: false })
+
+        if (error) throw error
+        setItems(data || [])
+      } catch (err) {
+        console.error('Error fetching items:', err)
+        setItemsError('לא הצלחנו לטעון את המוצרים שלך')
+      } finally {
+        setItemsLoading(false)
+      }
+    }
+
+    loadItems()
+  }, [user])
+
+  const refreshItems = async () => {
+    if (!user) return
+    setItemsLoading(true)
+    setItemsError('')
+    try {
+      const { data, error } = await supabase
+        .from('items')
+        .select('*, category:categories(id, name)')
+        .eq('seller_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      setItems(data || [])
+    } catch (err) {
+      console.error('Error refreshing items:', err)
+      setItemsError('לא הצלחנו לרענן את המוצרים שלך')
+    } finally {
+      setItemsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!user?.email) return
+    setFormData((prev) => ({
+      ...prev,
+      sellerEmail: prev.sellerEmail || user.email || '',
+    }))
+  }, [user?.email])
+
+  useEffect(() => {
+    if (!profile) return
+    setFormData((prev) => ({
+      ...prev,
+      sellerName: prev.sellerName || profile.full_name || '',
+      sellerPhone: prev.sellerPhone || profile.phone || '',
+    }))
+  }, [profile])
 
   const fetchCategories = async () => {
     try {
@@ -81,8 +192,15 @@ export default function SellPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
+    setSuccess(false)
 
     try {
+      if (!user) {
+        setError('צריך להתחבר כדי לפרסם מוצר')
+        setLoading(false)
+        return
+      }
+
       // Upload images to Supabase Storage
       const imageUrls: string[] = []
       
@@ -105,6 +223,19 @@ export default function SellPage() {
         imageUrls.push(publicUrl)
       }
 
+      // Keep profile up to date for the seller dashboard
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          full_name: formData.sellerName || null,
+          phone: formData.sellerPhone || null,
+        }, { onConflict: 'id' })
+
+      if (profileError) {
+        console.error('Profile update error:', profileError)
+      }
+
       // Create item
       const { error: insertError } = await supabase
         .from('items')
@@ -120,17 +251,30 @@ export default function SellPage() {
           image_urls: imageUrls,
           status: 'pending_approval',
           seller_name: formData.sellerName,
-          seller_email: formData.sellerEmail,
+          seller_email: formData.sellerEmail || user.email,
           seller_phone: formData.sellerPhone,
-          seller_id: null, // Anonymous for now
+          seller_id: user.id,
         })
 
       if (insertError) throw insertError
 
       setSuccess(true)
-      setTimeout(() => {
-        router.push('/')
-      }, 3000)
+      setImageFiles([])
+      setImagePreviews([])
+      setFormData((prev) => ({
+        ...prev,
+        title: '',
+        description: '',
+        categoryId: '',
+        subcategory: '',
+        condition: '',
+        city: '',
+        neighborhood: '',
+        priceAsk: '',
+        optIn: false,
+      }))
+      await refreshItems()
+      setTimeout(() => setSuccess(false), 4000)
       
     } catch (err: any) {
       console.error('Error:', err)
@@ -140,23 +284,30 @@ export default function SellPage() {
     }
   }
 
-  if (success) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 flex items-center justify-center">
-          <div className="max-w-md mx-auto text-center p-8">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">תודה רבה!</h2>
-            <p className="text-lg text-gray-700 mb-2">
-              המוצר נשלח לאישור ויפורסם בקרוב
-            </p>
-            <p className="text-gray-600">
-              נחזור אליך ברגע שיש קונה מעוניין
+          <div className="text-gray-600">טוען...</div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-1 py-8 sm:py-12">
+          <div className="container mx-auto px-4 max-w-xl space-y-4">
+            <AuthForm
+              title="כניסה למוכרים"
+              subtitle="כדי לפרסם מוצר צריך להתחבר לחשבון"
+            />
+            <p className="text-center text-sm text-gray-500">
+              קונים יכולים להמשיך ללא התחברות.
             </p>
           </div>
         </main>
@@ -171,6 +322,62 @@ export default function SellPage() {
       
       <main className="flex-1 py-8 sm:py-12">
         <div className="container mx-auto px-4 max-w-3xl">
+          <section className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">החנות שלי</h2>
+                <p className="text-sm text-gray-600 mt-1">
+                  כאן ניתן לראות את המוצרים והסטטוס שלהם
+                </p>
+              </div>
+              <a
+                href="#sell-form"
+                className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"
+              >
+                פרסם מוצר חדש
+              </a>
+            </div>
+
+            {itemsError && (
+              <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                {itemsError}
+              </div>
+            )}
+
+            {itemsLoading ? (
+              <div className="mt-4 text-gray-600">טוען מוצרים...</div>
+            ) : items.length === 0 ? (
+              <div className="mt-4 text-gray-600">עדיין לא פרסמת מוצרים.</div>
+            ) : (
+              <div className="mt-4 space-y-4">
+                {items.map((item) => {
+                  const statusLabel = STATUS_LABELS[item.status] || item.status
+                  const statusStyle = STATUS_STYLES[item.status] || 'bg-gray-100 text-gray-700'
+
+                  return (
+                    <div key={item.id} className="border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-4">
+                      <div className="flex-1 space-y-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-semibold text-gray-900">{item.title}</h3>
+                          <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statusStyle}`}>
+                            {statusLabel}
+                          </span>
+                        </div>
+                        {item.category?.name && (
+                          <p className="text-sm text-gray-600">קטגוריה: {item.category.name}</p>
+                        )}
+                        <p className="text-sm text-gray-600">מחיר מבוקש: {formatPrice(item.price_ask)}</p>
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        פורסם ב-{new Date(item.created_at).toLocaleDateString('he-IL')}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </section>
+
           {/* Header Text */}
           <div className="mb-6 sm:mb-8 text-center">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-4">מכירת מוצר</h1>
@@ -182,7 +389,7 @@ export default function SellPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-4 sm:p-6 space-y-5 sm:space-y-6">
+          <form id="sell-form" onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-4 sm:p-6 space-y-5 sm:space-y-6">
             {/* Title */}
             <div>
               <label htmlFor="title" className="block font-medium mb-2">
@@ -367,6 +574,10 @@ export default function SellPage() {
             {/* Contact Info */}
             <div className="border-t pt-6">
               <h3 className="font-semibold text-lg mb-4">פרטי קשר</h3>
+
+              {profileLoading && (
+                <p className="text-sm text-gray-500 mb-4">טוען פרטי חשבון...</p>
+              )}
               
               <div className="space-y-4">
                 <div>
@@ -425,6 +636,12 @@ export default function SellPage() {
                 </label>
               </div>
             </div>
+
+            {success && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+                המוצר נשלח לאישור ויפורסם בקרוב
+              </div>
+            )}
 
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">

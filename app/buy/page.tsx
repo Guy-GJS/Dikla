@@ -1,9 +1,8 @@
 import { Suspense } from 'react'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 import BuyPageClient from '@/components/BuyPageClient'
 
-// Reduce revalidation time to pick up changes faster
-export const revalidate = 10
+export const dynamic = 'force-dynamic'
 
 // Array of empowering texts
 const EMPOWERING_TEXTS = [
@@ -13,7 +12,7 @@ const EMPOWERING_TEXTS = [
 ]
 
 async function getCategories() {
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('categories')
     .select('id, name')
     .order('sort_order')
@@ -26,7 +25,7 @@ async function searchItems(searchParams: {
   category?: string
   city?: string
 }) {
-  let query = supabase
+  let query = supabaseAdmin
     .from('items')
     .select('*, category:categories(*)')
     .eq('status', 'approved')

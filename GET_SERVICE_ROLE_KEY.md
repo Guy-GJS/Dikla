@@ -62,7 +62,7 @@ The service role key allows the API routes to:
 Once you've added the real service role key and restarted the server:
 
 1. Go to: http://localhost:3000/admin
-2. Login with password: `Dikla0209` (from your NEXT_PUBLIC_ADMIN_SECRET)
+2. Login with password: `Dikla0209` (from your `ADMIN_SECRET`)
 3. You should see all your products in the "מוצרים" tab!
 
 ## Still Having Issues?

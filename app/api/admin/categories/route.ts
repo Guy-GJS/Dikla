@@ -1,20 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
-
-// SECURITY: This validates admin access before allowing ANY database operations
-function validateAdminAuth(request: NextRequest): boolean {
-  const authHeader = request.headers.get('authorization')
-  // Support both ADMIN_SECRET and NEXT_PUBLIC_ADMIN_SECRET for backward compatibility
-  const validToken = process.env.ADMIN_SECRET || process.env.NEXT_PUBLIC_ADMIN_SECRET || 'admin123'
-  
-  // In production, this should validate a proper JWT or session token
-  return authHeader === `Bearer ${validToken}`
-}
+import { validateAdminRequest } from '@/lib/adminAuth'
 
 export async function GET(request: NextRequest) {
   try {
     // SECURITY: Reject unauthorized requests immediately
-    if (!validateAdminAuth(request)) {
+    if (!validateAdminRequest(request)) {
       console.warn('Unauthorized admin access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -40,7 +31,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // SECURITY: Validate admin access
-    if (!validateAdminAuth(request)) {
+    if (!validateAdminRequest(request)) {
       console.warn('Unauthorized admin access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -79,7 +70,7 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     // SECURITY: Validate admin access
-    if (!validateAdminAuth(request)) {
+    if (!validateAdminRequest(request)) {
       console.warn('Unauthorized admin access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -112,7 +103,7 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   try {
     // SECURITY: Validate admin access
-    if (!validateAdminAuth(request)) {
+    if (!validateAdminRequest(request)) {
       console.warn('Unauthorized admin access attempt')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

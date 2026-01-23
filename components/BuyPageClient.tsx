@@ -57,12 +57,12 @@ export default function BuyPageClient({
 
               {/* CTA Button to open lead modal */}
               <div className="mt-12 text-center">
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 sm:p-8 max-w-2xl mx-auto border border-blue-100">
+                <div className="border border-gray-200 bg-gray-50 rounded-lg p-6 sm:p-8 max-w-2xl mx-auto">
                   <h3 className="text-xl sm:text-2xl font-bold mb-3 text-gray-900">לא מצאת בדיוק את מה שחיפשת?</h3>
                   <p className="text-sm sm:text-base text-gray-700 mb-6">נשמח לעזור לך למצוא את המוצר המושלם</p>
                   <button
                     onClick={() => setIsLeadModalOpen(true)}
-                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl text-base sm:text-lg"
+                    className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-md transition-colors text-base sm:text-lg"
                   >
                     אני מחפש משהו אחר
                   </button>
@@ -80,7 +80,7 @@ export default function BuyPageClient({
             >
               <button
                 onClick={() => setIsLeadModalOpen(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl text-base sm:text-lg"
+                className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-md transition-colors text-base sm:text-lg"
               >
                 אני מחפש משהו אחר
               </button>

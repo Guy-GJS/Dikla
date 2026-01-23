@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import EditItemModal from '@/components/EditItemModal'
@@ -10,7 +9,6 @@ import { formatPrice } from '@/lib/pricing'
 import { supabase } from '@/lib/supabase'
 
 export default function AdminPage() {
-  const router = useRouter()
   const [authenticated, setAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
@@ -29,9 +27,8 @@ export default function AdminPage() {
 
   useEffect(() => {
     // Check if already authenticated in session
-    const isAuth = sessionStorage.getItem('admin_auth') === 'true'
     const token = sessionStorage.getItem('admin_token') || ''
-    if (isAuth && token) {
+    if (token) {
       setAuthenticated(true)
       setAdminToken(token)
       fetchData(token)
@@ -39,19 +36,36 @@ export default function AdminPage() {
     setLoading(false)
   }, [])
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    // SECURITY: Validate password and create token
-    const validPassword = process.env.NEXT_PUBLIC_ADMIN_SECRET || 'admin123'
-    if (password === validPassword) {
-      const token = password // In production, this would be a JWT
+    try {
+      const response = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+
+      const payload = await response.json()
+      if (!response.ok) {
+        const message = payload?.error || 'סיסמה שגויה'
+        alert(message === 'Unauthorized' ? 'סיסמה שגויה' : message)
+        return
+      }
+
+      const token = payload?.token
+      if (!token) {
+        alert('לא התקבל טוקן מנהל')
+        return
+      }
+
       sessionStorage.setItem('admin_auth', 'true')
       sessionStorage.setItem('admin_token', token)
       setAuthenticated(true)
       setAdminToken(token)
       fetchData(token)
-    } else {
-      alert('סיסמה שגויה')
+    } catch (error) {
+      console.error('Admin login error:', error)
+      alert('שגיאה בכניסה למערכת')
     }
   }
 

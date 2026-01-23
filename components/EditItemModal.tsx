@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 
 interface EditItemModalProps {
   item: Item
-  adminToken: string
+  adminToken?: string
   onClose: () => void
   onSuccess: () => void
 }
@@ -19,6 +19,7 @@ export default function EditItemModal({
   onClose,
   onSuccess,
 }: EditItemModalProps) {
+  const isAdmin = Boolean(adminToken)
   const [formData, setFormData] = useState({
     title: item.title,
     description: item.description || '',
@@ -123,24 +124,39 @@ export default function EditItemModal({
       // Combine existing and new image URLs
       const allImageUrls = [...existingImages, ...newImageUrls]
 
-      // Update item
-      const response = await fetch('/api/admin/items', {
-        method: 'PATCH',
-        headers: {
-          'Authorization': `Bearer ${adminToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          itemId: item.id,
-          updates: {
+      if (isAdmin) {
+        // Update item via admin API
+        const response = await fetch('/api/admin/items', {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            itemId: item.id,
+            updates: {
+              ...formData,
+              image_urls: allImageUrls,
+            },
+          }),
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to update item')
+        }
+      } else {
+        // Update item directly for sellers (RLS applies)
+        const { error: updateError } = await supabase
+          .from('items')
+          .update({
             ...formData,
             image_urls: allImageUrls,
-          },
-        }),
-      })
+          })
+          .eq('id', item.id)
 
-      if (!response.ok) {
-        throw new Error('Failed to update item')
+        if (updateError) {
+          throw updateError
+        }
       }
 
       onSuccess()

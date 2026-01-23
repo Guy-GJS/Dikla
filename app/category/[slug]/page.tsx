@@ -1,12 +1,11 @@
 import { notFound } from 'next/navigation'
 import CategoryPageClient from '@/components/CategoryPageClient'
-import { supabase } from '@/lib/supabase'
+import { supabaseAdmin } from '@/lib/supabase'
 
-// Reduce revalidation time to pick up changes faster
-export const revalidate = 10
+export const dynamic = 'force-dynamic'
 
 async function getCategoryBySlug(slug: string) {
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('categories')
     .select('*')
     .eq('slug', slug)
@@ -16,7 +15,7 @@ async function getCategoryBySlug(slug: string) {
 }
 
 async function getItemsByCategory(categoryId: string) {
-  const { data } = await supabase
+  const { data } = await supabaseAdmin
     .from('items')
     .select('*, category:categories(*)')
     .eq('category_id', categoryId)
@@ -44,7 +43,7 @@ export default async function CategoryPage({
 
 // Generate static params for all categories
 export async function generateStaticParams() {
-  const { data: categories } = await supabase
+  const { data: categories } = await supabaseAdmin
     .from('categories')
     .select('slug')
 

@@ -46,10 +46,10 @@ export default function CategoryPageClient({
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSelectedSubcategory(null)}
-                  className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-md font-medium transition-colors ${
                     selectedSubcategory === null
-                      ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-400'
                   }`}
                 >
                   הכל
@@ -58,10 +58,10 @@ export default function CategoryPageClient({
                   <button
                     key={subcat}
                     onClick={() => setSelectedSubcategory(subcat)}
-                    className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${
+                    className={`px-4 py-2 rounded-md font-medium transition-colors ${
                       selectedSubcategory === subcat
-                        ? 'bg-blue-600 text-white shadow-md'
-                        : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-white text-gray-700 border border-gray-300 hover:border-blue-400'
                     }`}
                   >
                     {subcat}
@@ -85,7 +85,7 @@ export default function CategoryPageClient({
             >
               <button
                 onClick={() => setIsLeadModalOpen(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 active:from-blue-800 active:to-purple-800 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl text-base sm:text-lg"
+                className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-3 sm:py-4 px-6 sm:px-8 rounded-md transition-colors text-base sm:text-lg"
               >
                 אני מחפש משהו אחר
               </button>
