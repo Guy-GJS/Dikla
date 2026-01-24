@@ -46,10 +46,11 @@ export default function CategoryCard({ category }: CategoryCardProps) {
   const [imageError, setImageError] = useState(false)
   const icon = categoryIcons[category.slug] || categoryIcons.default
   const hasValidImage = category.image_url && !imageError
+  const categoryHref = `/category/${encodeURIComponent(category.slug)}`
 
   return (
     <Link
-      href={`/category/${category.slug}`}
+      href={categoryHref}
       className="group block bg-slate-100 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
     >
       <div className="aspect-square relative">

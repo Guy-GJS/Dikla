@@ -4,7 +4,7 @@ import Footer from '@/components/Footer'
 import CategoryCard from '@/components/CategoryCard'
 import { supabaseAdmin } from '@/lib/supabase'
 
-export const revalidate = 60 // Revalidate every 60 seconds
+export const dynamic = 'force-dynamic' // Keep category list fresh
 
 async function getCategories() {
   // First get all categories
@@ -15,9 +15,13 @@ async function getCategories() {
   
   if (!categories) return []
 
+  const validCategories = categories.filter((category) => {
+    return typeof category.slug === 'string' && category.slug.trim().length > 0
+  })
+
   // Then count approved items for each category
   const categoriesWithCounts = await Promise.all(
-    categories.map(async (category) => {
+    validCategories.map(async (category) => {
       const { count } = await supabaseAdmin
         .from('items')
         .select('*', { count: 'exact', head: true })
