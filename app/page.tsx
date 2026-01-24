@@ -125,6 +125,27 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* About Section */}
+        <section id="about" className="py-12 sm:py-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+                אודות פריטי
+              </h2>
+              <div className="space-y-4 text-gray-600 leading-relaxed">
+                <p>
+                  פריטי היא הפלטפורמה המובילה למכירת ורכישת מוצרי יד שנייה בישראל.
+                  אנחנו מאמינים שכל פריט יכול למצוא בית חדש, ושקנייה חכמה היא גם קנייה ירוקה.
+                </p>
+                <p>
+                  המטרה שלנו היא ליצור שוק פשוט, בטוח ונוח שמחבר בין מוכרים לקונים,
+                  ועוזר לכם למצוא בדיוק את מה שאתם צריכים במחיר הוגן.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Social Section */}
         <section className="py-10 bg-gray-50 border-t border-gray-100">
           <div className="container mx-auto px-4">

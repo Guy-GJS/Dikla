@@ -9,6 +9,7 @@ import { useAuth } from '@/components/AuthProvider'
 const NAV_LINKS = [
   { href: '/buy', label: 'קניה' },
   { href: '/#how-it-works', label: 'איך זה עובד' },
+  { href: '/#about', label: 'אודות' },
 ]
 
 export default function Header() {

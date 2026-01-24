@@ -42,6 +42,11 @@ export default function Footer() {
                   איך זה עובד
                 </Link>
               </li>
+              <li>
+                <Link href="/#about" className="text-gray-600 hover:text-gray-900 transition-colors">
+                  אודות
+                </Link>
+              </li>
             </ul>
           </div>
 

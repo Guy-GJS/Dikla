@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --site-font: "Assistant", "Heebo", "Rubik", "Arial", sans-serif;
+    --site-font: "Rubik", sans-serif;
   }
 
   html {
