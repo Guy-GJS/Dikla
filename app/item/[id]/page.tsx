@@ -6,12 +6,14 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ImageSlider from '@/components/ImageSlider'
 import PriceBreakdown from '@/components/PriceBreakdown'
+import { useDialog } from '@/components/DialogProvider'
 import { supabase } from '@/lib/supabase'
 import { Item } from '@/lib/types'
 import { calculatePricing } from '@/lib/pricing'
 import { useCommissionSettings } from '@/lib/useCommissionSettings'
 
 export default function ItemPage() {
+  const dialog = useDialog()
   const params = useParams()
   const router = useRouter()
   const { commissionSettings, defaultShipping, loading: settingsLoading } = useCommissionSettings()
@@ -73,7 +75,10 @@ export default function ItemPage() {
     })
 
     if (!response.ok) {
-      alert('אירעה שגיאה, נסה שוב')
+      await dialog.alert({
+        message: 'אירעה שגיאה, נסה שוב',
+        variant: 'error'
+      })
       console.error('Order creation failed:', await response.text())
       return
     }
@@ -92,7 +97,10 @@ export default function ItemPage() {
       window.open(whatsappUrl, '_blank')
       
       // Show success message
-      alert('פנייה נשלחה למוכר דרך WhatsApp! נא להמתין לאישור.')
+      await dialog.alert({
+        message: 'פנייה נשלחה למוכר דרך WhatsApp! נא להמתין לאישור.',
+        variant: 'success'
+      })
       router.push('/')
     }
   }

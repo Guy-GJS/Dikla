@@ -4,11 +4,13 @@ import { useEffect, useState } from 'react'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import EditItemModal from '@/components/EditItemModal'
+import { useDialog } from '@/components/DialogProvider'
 import { Item, WantedItemLead, Order, Category, Settings, CommissionSettings } from '@/lib/types'
 import { formatPrice } from '@/lib/pricing'
 import { supabase } from '@/lib/supabase'
 
 export default function AdminPage() {
+  const dialog = useDialog()
   const [authenticated, setAuthenticated] = useState(false)
   const [loading, setLoading] = useState(true)
   const [password, setPassword] = useState('')
@@ -48,13 +50,19 @@ export default function AdminPage() {
       const payload = await response.json()
       if (!response.ok) {
         const message = payload?.error || 'סיסמה שגויה'
-        alert(message === 'Unauthorized' ? 'סיסמה שגויה' : message)
+        await dialog.alert({
+          message: message === 'Unauthorized' ? 'סיסמה שגויה' : message,
+          variant: 'error'
+        })
         return
       }
 
       const token = payload?.token
       if (!token) {
-        alert('לא התקבל טוקן מנהל')
+        await dialog.alert({
+          message: 'לא התקבל טוקן מנהל',
+          variant: 'error'
+        })
         return
       }
 
@@ -65,7 +73,10 @@ export default function AdminPage() {
       fetchData(token)
     } catch (error) {
       console.error('Admin login error:', error)
-      alert('שגיאה בכניסה למערכת')
+      await dialog.alert({
+        message: 'שגיאה בכניסה למערכת',
+        variant: 'error'
+      })
     }
   }
 
@@ -113,7 +124,10 @@ export default function AdminPage() {
       }
     } catch (error) {
       console.error('Error fetching data:', error)
-      alert('שגיאה בטעינת הנתונים')
+      await dialog.alert({
+        message: 'שגיאה בטעינת הנתונים',
+        variant: 'error'
+      })
     }
   }
 
@@ -135,7 +149,10 @@ export default function AdminPage() {
       fetchData(adminToken)
     } catch (error) {
       console.error('Error updating item:', error)
-      alert('שגיאה בעדכון')
+      await dialog.alert({
+        message: 'שגיאה בעדכון',
+        variant: 'error'
+      })
     }
   }
 
@@ -157,12 +174,22 @@ export default function AdminPage() {
       fetchData(adminToken)
     } catch (error) {
       console.error('Error updating item:', error)
-      alert('שגיאה בעדכון')
+      await dialog.alert({
+        message: 'שגיאה בעדכון',
+        variant: 'error'
+      })
     }
   }
 
   const deleteItem = async (itemId: string) => {
-    if (!confirm('האם אתה בטוח שברצונך למחוק?')) return
+    const confirmed = await dialog.confirm({
+      message: 'האם אתה בטוח שברצונך למחוק?',
+      variant: 'danger',
+      confirmText: 'מחק',
+      cancelText: 'ביטול'
+    })
+    
+    if (!confirmed) return
 
     try {
       const response = await fetch(`/api/admin/items?itemId=${itemId}`, {
@@ -180,7 +207,10 @@ export default function AdminPage() {
       fetchData(adminToken)
     } catch (error) {
       console.error('Error deleting item:', error)
-      alert('שגיאה במחיקה')
+      await dialog.alert({
+        message: 'שגיאה במחיקה',
+        variant: 'error'
+      })
     }
   }
 
@@ -211,12 +241,22 @@ export default function AdminPage() {
       fetchData(adminToken)
     } catch (error) {
       console.error('Error saving category:', error)
-      alert('שגיאה בשמירת קטגוריה')
+      await dialog.alert({
+        message: 'שגיאה בשמירת קטגוריה',
+        variant: 'error'
+      })
     }
   }
 
   const deleteCategory = async (categoryId: string) => {
-    if (!confirm('האם אתה בטוח שברצונך למחוק קטגוריה זו? מוצרים המשוייכים לקטגוריה יישארו ללא קטגוריה.')) return
+    const confirmed = await dialog.confirm({
+      message: 'האם אתה בטוח שברצונך למחוק קטגוריה זו? מוצרים המשוייכים לקטגוריה יישארו ללא קטגוריה.',
+      variant: 'danger',
+      confirmText: 'מחק',
+      cancelText: 'ביטול'
+    })
+    
+    if (!confirmed) return
 
     try {
       const response = await fetch(`/api/admin/categories?categoryId=${categoryId}`, {
@@ -234,7 +274,10 @@ export default function AdminPage() {
       fetchData(adminToken)
     } catch (error) {
       console.error('Error deleting category:', error)
-      alert('שגיאה במחיקת קטגוריה')
+      await dialog.alert({
+        message: 'שגיאה במחיקת קטגוריה',
+        variant: 'error'
+      })
     }
   }
 

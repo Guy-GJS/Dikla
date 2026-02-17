@@ -1,7 +1,6 @@
-import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import CategoryCard from '@/components/CategoryCard'
+import CategoriesClient from '@/components/CategoriesClient'
 import { supabaseAdmin } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic' // Keep category list fresh
@@ -51,11 +50,14 @@ export default async function HomePage() {
           <div className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
             <div className="max-w-3xl mx-auto text-center">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-4">
-                קונים ומוכרים הכל במקום אחד
+                קונים ומוכרים פריטים בקלות
               </h1>
-              <p className="text-lg sm:text-xl text-gray-600">
-                הפלטפורמה החברתית למכירה וקנייה של מוצרי יד שנייה בישראל
+              <p className="text-xl sm:text-2xl text-gray-600 font-bold mb-3">
+                מפנים מקום למשהו טוב
               </p>
+              <h2 className="text-base sm:text-lg text-gray-500">
+                הפלטפורמה החברתית למכירה וקנייה של מוצרי יד שנייה בישראל
+              </h2>
             </div>
           </div>
         </section>
@@ -63,23 +65,7 @@ export default async function HomePage() {
         {/* Categories Section */}
         <section className="py-12 sm:py-16">
           <div className="container mx-auto px-4">
-            <div className="flex justify-end mb-8">
-              <Link 
-                href="/buy" 
-                className="inline-flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
-              >
-                לכל המוצרים
-                <svg className="w-4 h-4 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </div>
-            
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-              {categories.map((category) => (
-                <CategoryCard key={category.id} category={category} />
-              ))}
-            </div>
+            <CategoriesClient categories={categories} />
           </div>
         </section>
 
@@ -100,9 +86,9 @@ export default async function HomePage() {
                 <div className="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                   1
                 </div>
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">פרסם את המוצר</h3>
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">העלו לאתר פריט</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  העלה תמונות, תאר את המוצר ושים מחיר הוגן
+                  תיאור | תמונה | מחיר
                 </p>
               </div>
 
@@ -110,9 +96,9 @@ export default async function HomePage() {
                 <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                   2
                 </div>
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">נאשר ונפרסם</h3>
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">הפריט יפורסם</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  נבדוק את המודעה ונעלה אותה לאתר תוך זמן קצר
+                  הצוות שלנו יבדוק את המודעה ויעלה אותה לאתר תוך זמן קצר
                 </p>
               </div>
 
@@ -120,9 +106,9 @@ export default async function HomePage() {
                 <div className="w-14 h-14 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-4 text-xl font-bold">
                   3
                 </div>
-                <h3 className="font-semibold text-lg text-gray-900 mb-2">מכור והרווח</h3>
+                <h3 className="font-semibold text-lg text-gray-900 mb-2">הפריט יעבור הלאה</h3>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  קבל פניות מקונים מעוניינים ובצע את העסקה
+                  בחרו מועד לאיסוף הפריט מכם, הפריט יאסף והתשלום עבורו יתקבל בחשבונכם
                 </p>
               </div>
             </div>
@@ -138,12 +124,16 @@ export default async function HomePage() {
               </h2>
               <div className="space-y-4 text-gray-600 leading-relaxed">
                 <p>
-                  פריטי היא הפלטפורמה המובילה למכירת ורכישת מוצרי יד שנייה בישראל.
-                  אנחנו מאמינים שכל פריט יכול למצוא בית חדש, ושקנייה חכמה היא גם קנייה ירוקה.
+                  פריטי היא פלטפורמה חברתית לקנייה ומכירה של פריטים יד שנייה, שנועדה להפוך צריכה חוזרת לפשוטה, נוחה ונגישה.
                 </p>
                 <p>
-                  המטרה שלנו היא ליצור שוק פשוט, בטוח ונוח שמחבר בין מוכרים לקונים,
-                  ועוזר לכם למצוא בדיוק את מה שאתם צריכים במחיר הוגן.
+                  המטרה שלנו היא לצמצם רכישה של פריטים חדשים, להאריך את חיי המוצרים שכבר קיימים ולעודד צרכנות מודעת וחכמה יותר.
+                </p>
+                <p>
+                  פריטי מחברת בין אנשים לפריטים איכותיים יד שנייה, ויוצרת מרחב שמבוסס על קהילה, אמון ושימוש חוזר, בלי ייצור מיותר ובלי עודף צריכה.
+                </p>
+                <p>
+                  אנחנו מאמינות שיד שנייה יכולה להיות הבחירה הטבעית והראשונה, ולא רק אלטרנטיבה, ומזמינות אתכם להצטרף ולהתנסות. בואו לפנות מקום למשהו טוב.
                 </p>
               </div>
             </div>
