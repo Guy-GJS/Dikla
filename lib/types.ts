@@ -28,9 +28,11 @@ export interface Item {
   seller_id: string | null
   title: string
   description: string | null
+  brand: string | null
   category_id: string | null
   subcategory: string | null
   condition: ItemCondition | null
+  address: string | null
   city: string | null
   neighborhood: string | null
   price_ask: number

@@ -23,10 +23,12 @@ export default function EditItemModal({
   const [formData, setFormData] = useState({
     title: item.title,
     description: item.description || '',
+    brand: item.brand || '',
     price_ask: item.price_ask,
     condition: item.condition || 'מצב טוב',
     category_id: item.category_id || '',
     subcategory: item.subcategory || '',
+    address: item.address || '',
     city: item.city || '',
     neighborhood: item.neighborhood || '',
     seller_name: item.seller_name || '',
@@ -37,6 +39,7 @@ export default function EditItemModal({
   const [existingImages, setExistingImages] = useState<string[]>(item.image_urls || [])
   const [newImageFiles, setNewImageFiles] = useState<File[]>([])
   const [newImagePreviews, setNewImagePreviews] = useState<string[]>([])
+  const [mainImageIndex, setMainImageIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   const [uploadingImages, setUploadingImages] = useState(false)
   const [error, setError] = useState('')
@@ -84,11 +87,28 @@ export default function EditItemModal({
 
   const removeExistingImage = (index: number) => {
     setExistingImages(existingImages.filter((_, i) => i !== index))
+    
+    // Adjust main image index
+    if (index === mainImageIndex) {
+      setMainImageIndex(0)
+    } else if (index < mainImageIndex) {
+      setMainImageIndex(mainImageIndex - 1)
+    }
   }
 
   const removeNewImage = (index: number) => {
     setNewImageFiles(newImageFiles.filter((_, i) => i !== index))
     setNewImagePreviews(newImagePreviews.filter((_, i) => i !== index))
+    
+    const newImageStartIndex = existingImages.length
+    const absoluteIndex = newImageStartIndex + index
+    
+    // Adjust main image index
+    if (absoluteIndex === mainImageIndex) {
+      setMainImageIndex(0)
+    } else if (absoluteIndex < mainImageIndex) {
+      setMainImageIndex(mainImageIndex - 1)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -122,7 +142,14 @@ export default function EditItemModal({
       setUploadingImages(false)
 
       // Combine existing and new image URLs
-      const allImageUrls = [...existingImages, ...newImageUrls]
+      let allImageUrls = [...existingImages, ...newImageUrls]
+      
+      // Reorder so main image is first
+      if (mainImageIndex > 0 && mainImageIndex < allImageUrls.length) {
+        const mainImage = allImageUrls[mainImageIndex]
+        allImageUrls.splice(mainImageIndex, 1)
+        allImageUrls.unshift(mainImage)
+      }
 
       if (isAdmin) {
         // Update item via admin API
@@ -208,6 +235,21 @@ export default function EditItemModal({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+              placeholder="תיאור המוצר, מותג, דגם, מידות מדויקות, חומר, מצב המוצר, תקינות, פגמים אם ישנם."
+            />
+          </div>
+
+          <div>
+            <label htmlFor="brand" className="block text-sm font-medium mb-1">
+              מותג
+            </label>
+            <input
+              type="text"
+              id="brand"
+              value={formData.brand}
+              onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              placeholder="למשל: איקאה, זארה, אפל"
             />
           </div>
 
@@ -318,6 +360,11 @@ export default function EditItemModal({
             <label className="block text-sm font-medium mb-2">
               תמונות (עד 8)
             </label>
+            {(existingImages.length > 0 || newImagePreviews.length > 0) && (
+              <p className="text-xs text-gray-600 mb-3">
+                לחץ על תמונה כדי להגדיר אותה כתמונה ראשית
+              </p>
+            )}
             
             {/* Existing Images */}
             {existingImages.length > 0 && (
@@ -325,15 +372,29 @@ export default function EditItemModal({
                 <p className="text-sm text-gray-600 mb-2">תמונות קיימות:</p>
                 <div className="grid grid-cols-4 gap-4">
                   {existingImages.map((url, index) => (
-                    <div key={`existing-${index}`} className="relative aspect-square">
+                    <div 
+                      key={`existing-${index}`} 
+                      className={`relative aspect-square cursor-pointer ${
+                        index === mainImageIndex ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                      }`}
+                      onClick={() => setMainImageIndex(index)}
+                    >
                       <img
                         src={url}
                         alt={`תמונה קיימת ${index + 1}`}
                         className="w-full h-full object-cover rounded border border-gray-300"
                       />
+                      {index === mainImageIndex && (
+                        <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                          ראשית
+                        </div>
+                      )}
                       <button
                         type="button"
-                        onClick={() => removeExistingImage(index)}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          removeExistingImage(index)
+                        }}
                         className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xl leading-none"
                       >
                         ×
@@ -349,22 +410,39 @@ export default function EditItemModal({
               <div className="mb-4">
                 <p className="text-sm text-gray-600 mb-2">תמונות חדשות:</p>
                 <div className="grid grid-cols-4 gap-4">
-                  {newImagePreviews.map((preview, index) => (
-                    <div key={`new-${index}`} className="relative aspect-square">
-                      <img
-                        src={preview}
-                        alt={`תמונה חדשה ${index + 1}`}
-                        className="w-full h-full object-cover rounded border border-green-300"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeNewImage(index)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xl leading-none"
+                  {newImagePreviews.map((preview, index) => {
+                    const absoluteIndex = existingImages.length + index
+                    return (
+                      <div 
+                        key={`new-${index}`} 
+                        className={`relative aspect-square cursor-pointer ${
+                          absoluteIndex === mainImageIndex ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                        }`}
+                        onClick={() => setMainImageIndex(absoluteIndex)}
                       >
-                        ×
-                      </button>
-                    </div>
-                  ))}
+                        <img
+                          src={preview}
+                          alt={`תמונה חדשה ${index + 1}`}
+                          className="w-full h-full object-cover rounded border border-green-300"
+                        />
+                        {absoluteIndex === mainImageIndex && (
+                          <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                            ראשית
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            removeNewImage(index)
+                          }}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 text-xl leading-none"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             )}
@@ -401,6 +479,21 @@ export default function EditItemModal({
                   value={formData.seller_name}
                   onChange={(e) => setFormData({ ...formData, seller_name: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="address" className="block text-sm font-medium mb-1">
+                  כתובת <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="address"
+                  required
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  placeholder="רחוב ומספר בית"
                 />
               </div>
 

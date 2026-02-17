@@ -6,22 +6,9 @@ import Footer from '@/components/Footer'
 import AuthForm from '@/components/AuthForm'
 import { useAuth } from '@/components/AuthProvider'
 import { supabase } from '@/lib/supabase'
-import { formatPrice } from '@/lib/pricing'
-import { ItemCondition, Category, Profile, Item, ItemStatus } from '@/lib/types'
+import { ItemCondition, Category, Profile } from '@/lib/types'
 
 const CONDITIONS: ItemCondition[] = ['חדש', 'כמו חדש', 'מצב טוב', 'סביר']
-const STATUS_LABELS: Record<ItemStatus, string> = {
-  pending_approval: 'ממתין לאישור',
-  approved: 'מאושר',
-  sold: 'נמכר',
-  rejected: 'נדחה',
-}
-const STATUS_STYLES: Record<ItemStatus, string> = {
-  pending_approval: 'bg-yellow-100 text-yellow-800',
-  approved: 'bg-green-100 text-green-800',
-  sold: 'bg-gray-200 text-gray-700',
-  rejected: 'bg-red-100 text-red-700',
-}
 
 export default function SellPage() {
   const { user, loading: authLoading } = useAuth()
@@ -30,19 +17,19 @@ export default function SellPage() {
   const [success, setSuccess] = useState(false)
   const [imageFiles, setImageFiles] = useState<File[]>([])
   const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [mainImageIndex, setMainImageIndex] = useState(0)
   const [categories, setCategories] = useState<Category[]>([])
   const [profile, setProfile] = useState<Profile | null>(null)
   const [profileLoading, setProfileLoading] = useState(false)
-  const [items, setItems] = useState<Item[]>([])
-  const [itemsLoading, setItemsLoading] = useState(false)
-  const [itemsError, setItemsError] = useState('')
   
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    brand: '',
     categoryId: '',
     subcategory: '',
     condition: '' as ItemCondition | '',
+    address: '',
     city: '',
     neighborhood: '',
     priceAsk: '',
@@ -59,7 +46,6 @@ export default function SellPage() {
   useEffect(() => {
     if (!user) {
       setProfile(null)
-      setItems([])
       return
     }
 
@@ -84,52 +70,6 @@ export default function SellPage() {
     fetchProfile()
   }, [user])
 
-  useEffect(() => {
-    if (!user) return
-
-    const loadItems = async () => {
-      setItemsLoading(true)
-      setItemsError('')
-      try {
-        const { data, error } = await supabase
-          .from('items')
-          .select('*, category:categories(id, name)')
-          .eq('seller_id', user.id)
-          .order('created_at', { ascending: false })
-
-        if (error) throw error
-        setItems(data || [])
-      } catch (err) {
-        console.error('Error fetching items:', err)
-        setItemsError('לא הצלחנו לטעון את המוצרים שלך')
-      } finally {
-        setItemsLoading(false)
-      }
-    }
-
-    loadItems()
-  }, [user])
-
-  const refreshItems = async () => {
-    if (!user) return
-    setItemsLoading(true)
-    setItemsError('')
-    try {
-      const { data, error } = await supabase
-        .from('items')
-        .select('*, category:categories(id, name)')
-        .eq('seller_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      setItems(data || [])
-    } catch (err) {
-      console.error('Error refreshing items:', err)
-      setItemsError('לא הצלחנו לרענן את המוצרים שלך')
-    } finally {
-      setItemsLoading(false)
-    }
-  }
 
   useEffect(() => {
     if (!user?.email) return
@@ -186,6 +126,13 @@ export default function SellPage() {
   const removeImage = (index: number) => {
     setImageFiles(imageFiles.filter((_, i) => i !== index))
     setImagePreviews(imagePreviews.filter((_, i) => i !== index))
+    
+    // Adjust main image index
+    if (index === mainImageIndex) {
+      setMainImageIndex(0) // Reset to first image
+    } else if (index < mainImageIndex) {
+      setMainImageIndex(mainImageIndex - 1) // Shift down if removed image was before main
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -201,10 +148,18 @@ export default function SellPage() {
         return
       }
 
+      // Reorder images so main image is first
+      const orderedFiles = [...imageFiles]
+      if (mainImageIndex > 0 && mainImageIndex < orderedFiles.length) {
+        const mainFile = orderedFiles[mainImageIndex]
+        orderedFiles.splice(mainImageIndex, 1)
+        orderedFiles.unshift(mainFile)
+      }
+
       // Upload images to Supabase Storage
       const imageUrls: string[] = []
       
-      for (const file of imageFiles) {
+      for (const file of orderedFiles) {
         const fileExt = file.name.split('.').pop()
         const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
         const filePath = `${fileName}`
@@ -242,9 +197,11 @@ export default function SellPage() {
         .insert({
           title: formData.title,
           description: formData.description || null,
+          brand: formData.brand || null,
           category_id: formData.categoryId, // Required field
           subcategory: formData.subcategory || null,
           condition: formData.condition || null,
+          address: formData.address || null,
           city: formData.city || null,
           neighborhood: formData.neighborhood || null,
           price_ask: parseFloat(formData.priceAsk),
@@ -261,19 +218,21 @@ export default function SellPage() {
       setSuccess(true)
       setImageFiles([])
       setImagePreviews([])
+      setMainImageIndex(0)
       setFormData((prev) => ({
         ...prev,
         title: '',
         description: '',
+        brand: '',
         categoryId: '',
         subcategory: '',
         condition: '',
+        address: '',
         city: '',
         neighborhood: '',
         priceAsk: '',
         optIn: false,
       }))
-      await refreshItems()
       setTimeout(() => setSuccess(false), 4000)
       
     } catch (err: any) {
@@ -322,62 +281,6 @@ export default function SellPage() {
       
       <main className="flex-1 py-8 sm:py-12">
         <div className="container mx-auto px-4 max-w-3xl">
-          <section className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">החנות שלי</h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  כאן ניתן לראות את המוצרים והסטטוס שלהם
-                </p>
-              </div>
-              <a
-                href="#sell-form"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"
-              >
-                פרסם מוצר חדש
-              </a>
-            </div>
-
-            {itemsError && (
-              <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                {itemsError}
-              </div>
-            )}
-
-            {itemsLoading ? (
-              <div className="mt-4 text-gray-600">טוען מוצרים...</div>
-            ) : items.length === 0 ? (
-              <div className="mt-4 text-gray-600">עדיין לא פרסמת מוצרים.</div>
-            ) : (
-              <div className="mt-4 space-y-4">
-                {items.map((item) => {
-                  const statusLabel = STATUS_LABELS[item.status] || item.status
-                  const statusStyle = STATUS_STYLES[item.status] || 'bg-gray-100 text-gray-700'
-
-                  return (
-                    <div key={item.id} className="border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center gap-4">
-                      <div className="flex-1 space-y-2">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <h3 className="font-semibold text-gray-900">{item.title}</h3>
-                          <span className={`text-xs font-semibold px-3 py-1 rounded-full ${statusStyle}`}>
-                            {statusLabel}
-                          </span>
-                        </div>
-                        {item.category?.name && (
-                          <p className="text-sm text-gray-600">קטגוריה: {item.category.name}</p>
-                        )}
-                        <p className="text-sm text-gray-600">מחיר מבוקש: {formatPrice(item.price_ask)}</p>
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        פורסם ב-{new Date(item.created_at).toLocaleDateString('he-IL')}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
-          </section>
-
           {/* Header Text */}
           <div className="mb-6 sm:mb-8 text-center">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-4">מכירת מוצר</h1>
@@ -417,7 +320,22 @@ export default function SellPage() {
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                placeholder="תאר את המוצר, גודל, מצב, סיבת המכירה וכו׳"
+                placeholder="תיאור המוצר, מותג, דגם, מידות מדויקות, חומר, מצב המוצר, תקינות, פגמים אם ישנם."
+              />
+            </div>
+
+            {/* Brand */}
+            <div>
+              <label htmlFor="brand" className="block font-medium mb-2">
+                מותג
+              </label>
+              <input
+                type="text"
+                id="brand"
+                value={formData.brand}
+                onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                placeholder="למשל: איקאה, זארה, אפל"
               />
             </div>
 
@@ -534,18 +452,37 @@ export default function SellPage() {
               <label className="block font-medium mb-2 text-sm sm:text-base">
                 תמונות (עד 8)
               </label>
+              {imagePreviews.length > 0 && (
+                <p className="text-xs sm:text-sm text-gray-600 mb-3">
+                  לחץ על תמונה כדי להגדיר אותה כתמונה ראשית
+                </p>
+              )}
               
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-4 mb-4">
                 {imagePreviews.map((preview, index) => (
-                  <div key={index} className="relative aspect-square">
+                  <div 
+                    key={index} 
+                    className={`relative aspect-square cursor-pointer ${
+                      index === mainImageIndex ? 'ring-2 ring-blue-500 ring-offset-2' : ''
+                    }`}
+                    onClick={() => setMainImageIndex(index)}
+                  >
                     <img
                       src={preview}
                       alt={`תמונה ${index + 1}`}
                       className="w-full h-full object-cover rounded border border-gray-300"
                     />
+                    {index === mainImageIndex && (
+                      <div className="absolute top-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                        ראשית
+                      </div>
+                    )}
                     <button
                       type="button"
-                      onClick={() => removeImage(index)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        removeImage(index)
+                      }}
                       className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-red-500 text-white rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center hover:bg-red-600 text-lg sm:text-xl"
                     >
                       ×
@@ -591,6 +528,21 @@ export default function SellPage() {
                     value={formData.sellerName}
                     onChange={(e) => setFormData({ ...formData, sellerName: e.target.value })}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="address" className="block font-medium mb-2">
+                    כתובת <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="address"
+                    required
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                    placeholder="רחוב ומספר בית"
                   />
                 </div>
 

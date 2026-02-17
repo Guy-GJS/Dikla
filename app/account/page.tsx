@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import AuthForm from '@/components/AuthForm'
 import EditItemModal from '@/components/EditItemModal'
+import SellItemModal from '@/components/SellItemModal'
 import { useAuth } from '@/components/AuthProvider'
 import { supabase } from '@/lib/supabase'
 import { Item } from '@/lib/types'
@@ -39,6 +39,7 @@ export default function AccountPage() {
   const [itemsLoading, setItemsLoading] = useState(false)
   const [itemsError, setItemsError] = useState('')
   const [editingItem, setEditingItem] = useState<Item | null>(null)
+  const [showSellModal, setShowSellModal] = useState(false)
 
   useEffect(() => {
     if (!user) {
@@ -207,12 +208,12 @@ export default function AccountPage() {
                   אפשר לערוך מוצרים שנמצאים בהמתנה לאישור
                 </p>
               </div>
-              <Link
-                href="/sell"
+              <button
+                onClick={() => setShowSellModal(true)}
                 className="px-4 py-2 rounded-full bg-green-600 text-white font-semibold hover:bg-green-700 transition-colors"
               >
                 פרסם מוצר חדש
-              </Link>
+              </button>
             </div>
 
             {itemsError && (
@@ -228,7 +229,7 @@ export default function AccountPage() {
                 עדיין לא פרסמת מוצרים. אפשר להתחיל מכאן.
               </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
                 {items.map((item) => {
                   const statusLabel = STATUS_LABELS[item.status] || item.status
                   const statusStyle = STATUS_STYLES[item.status] || 'bg-gray-100 text-gray-700'
@@ -369,6 +370,16 @@ export default function AccountPage() {
           onClose={() => setEditingItem(null)}
           onSuccess={async () => {
             setEditingItem(null)
+            await refreshItems()
+          }}
+        />
+      )}
+
+      {showSellModal && (
+        <SellItemModal
+          onClose={() => setShowSellModal(false)}
+          onSuccess={async () => {
+            setShowSellModal(false)
             await refreshItems()
           }}
         />
